@@ -4,73 +4,76 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-//Íæ¼ÒÀà
+//ç©å®¶ç±»
 public class Player {
 	private int id;
 	private String name;
 	private Socket socket;
-	private boolean isDealer;  //ÊÇ·ñÊÇ×¯¼Ò
-	
+	private boolean isDealer; // æ˜¯å¦æ˜¯åº„å®¶
+
 	public boolean isDealer() {
 		return isDealer;
 	}
+
 	public void setDealer(boolean isDealer) {
 		this.isDealer = isDealer;
 	}
 
-	private List<Majhong> majhongs = new ArrayList<Majhong>(); //Íæ¼ÒµÄÆË¿ËÁĞ±í
-	
+	private List<Majhong> majhongs = new ArrayList<Majhong>(); // ç©å®¶çš„æ‰‘å…‹åˆ—è¡¨
+
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public Socket getSocket() {
 		return socket;
 	}
+
 	public void setSocket(Socket socket) {
 		this.socket = socket;
 	}
+
 	public List<Majhong> getMajhongs() {
 		return majhongs;
 	}
+
 	public void setMajhongs(List<Majhong> majhongs) {
 		this.majhongs = majhongs;
 	}
 
-	public Player()
-	{
-		
+	public Player() {
+
 	}
-	
-	public Player(int id,String name,Socket socket,List<Majhong> majhongs)
-	{
+
+	public Player(int id, String name, Socket socket, List<Majhong> majhongs) {
 		this.id = id;
-		this.name  = name;
+		this.name = name;
 		this.socket = socket;
 		this.majhongs = majhongs;
 	}
-	
-	public Player(int id) 
-	{
+
+	public Player(int id) {
 		this.id = id;
 	}
-	
-	public Player(int id,String name) 
-	{
+
+	public Player(int id, String name) {
 		this.id = id;
 		this.name = name;
 	}
-	
-	public Player(int id,String name,boolean isDealer,List<Majhong> majhongs) 
-	{
+
+	public Player(int id, String name, boolean isDealer, List<Majhong> majhongs) {
 		this.id = id;
 		this.name = name;
 		this.isDealer = isDealer;

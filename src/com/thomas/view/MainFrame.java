@@ -24,7 +24,7 @@ import com.thomas.util.GameUtil;
 public class MainFrame extends JFrame {
 	public MyPanel myPanel;
 	public String uname;
-	// public Socket socket;
+	public Socket socket;
 
 	public SendThread sendThread;
 	public ReceiveThread receiveThread;
@@ -73,9 +73,9 @@ public class MainFrame extends JFrame {
 	// 现在是否是轮到我出牌
 	public boolean isMyturn;
 
-	public MainFrame(String uname) {
+	public MainFrame(String uname, Socket socket) {
 		this.uname = uname;
-		// this.socket = socket;
+		this.socket = socket;
 
 		// 设置窗口的属性
 		this.setSize(1280, 720);
@@ -87,6 +87,14 @@ public class MainFrame extends JFrame {
 		myPanel = new MyPanel();
 		myPanel.setBounds(0, 0, 1280, 720);
 		this.add(myPanel);
+
+		// 启动发送消息的线程
+		sendThread = new SendThread(socket, uname);
+		sendThread.start();
+
+		// 启动接收消息的线程
+		receiveThread = new ReceiveThread(socket, this);
+		receiveThread.start();
 
 		// String picPath1 = "images/majhong/front_inhand_image_29.png";
 		// String valuePath = "images/majhong/w_1.png";
