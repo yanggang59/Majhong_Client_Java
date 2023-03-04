@@ -16,81 +16,66 @@ import javax.swing.JTextField;
 
 import com.thomas.view.MainFrame;
 
-public class Login extends JFrame{
+public class Login extends JFrame {
 	private JLabel unameJlable;
 	private JLabel passwordJLabel;
 	private JTextField unameJTextFiled;
 	private JPasswordField passwordJTextField;
 	private JButton logInJButton;
 	private JButton cancelJButton;
-	
-	private JPanel jp1,jp2,jp3;
-	
-	public Login()
-	{
-		this.unameJlable = new JLabel("ÓÃ»§Ãû:");
-		this.passwordJLabel = new JLabel("ÃÜ    Âë:");
+
+	private JPanel jp1, jp2, jp3;
+
+	public Login() {
+		this.unameJlable = new JLabel("ç”¨æˆ·å:");
+		this.passwordJLabel = new JLabel("å¯†    ç :");
 		this.unameJTextFiled = new JTextField(10);
 		this.passwordJTextField = new JPasswordField(10);
-		this.logInJButton = new JButton("µÇÂ¼");
-		this.cancelJButton = new JButton("È¡Ïû");
-		
-		jp1 = new JPanel(); 
-		jp2 = new JPanel(); 
-		jp3 = new JPanel(); 
-		
-		this.setLayout(new GridLayout(3,1,5,5));
-		
+		this.logInJButton = new JButton("ç™»å½•");
+		this.cancelJButton = new JButton("å–æ¶ˆ");
+
+		jp1 = new JPanel();
+		jp2 = new JPanel();
+		jp3 = new JPanel();
+
+		this.setLayout(new GridLayout(3, 1, 5, 5));
+
 		jp1.add(unameJlable);
 		jp1.add(unameJTextFiled);
-		
+
 		jp2.add(passwordJLabel);
 		jp2.add(passwordJTextField);
-		
+
 		jp3.add(logInJButton);
 		jp3.add(cancelJButton);
-		
+
 		this.add(jp1);
 		this.add(jp2);
 		this.add(jp3);
-		
-		this.setSize(280,160);
+
+		this.setSize(280, 160);
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		//this.setLayout(new GridLayout(2,2));
-		
-		
-		//´´½¨¼àÌıÆ÷¶ÔÏó£¬°ó¶¨µ½µÇÂ¼°´Å¥
+
+		// this.setLayout(new GridLayout(2,2));
+
+		// åˆ›å»ºç›‘å¬å™¨å¯¹è±¡ï¼Œç»‘å®šåˆ°ç™»å½•æŒ‰é’®
 		MyEventListener myEventListener = new MyEventListener();
 		this.logInJButton.addActionListener(myEventListener);
 	}
-	
-	//´´½¨ÊÂ¼ş¼àÌıÆ÷Àà
-	class MyEventListener implements ActionListener
-	{
+
+	// åˆ›å»ºäº‹ä»¶ç›‘å¬å™¨ç±»
+	class MyEventListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
-			//1.»ñµÃÓÃ»§Ãû
+			// 1.è·å¾—ç”¨æˆ·å
 			String uname = unameJTextFiled.getText();
-		
-			//2.´´½¨Ò»¸ösocket
-			try {
-				Socket socket = new Socket("127.0.0.1",8838);
-				//3.Ìøµ½Ö÷´°¿Ú
-				new MainFrame(uname,socket);
-				
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			new MainFrame(uname);
 		}
-		
+
 	}
 }

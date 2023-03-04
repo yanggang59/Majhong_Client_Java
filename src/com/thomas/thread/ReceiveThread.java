@@ -17,120 +17,112 @@ import com.thomas.model.Majhong;
 import com.thomas.model.MajhongLabel;
 import com.thomas.model.Message;
 
-public class ReceiveThread extends Thread{
+public class ReceiveThread extends Thread {
 	private Socket socket;
 	private MainFrame mainFrame;
 	ClientGameState clientGameState = ClientGameState.INITIAL;
-	
-	public ReceiveThread(Socket socket,MainFrame mainFrame)
-	{
+
+	public ReceiveThread(Socket socket, MainFrame mainFrame) {
 		this.socket = socket;
 		this.mainFrame = mainFrame;
 	}
-	
-	public void run()
-	{
+
+	public void run() {
 		try {
 			DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-			while(true)
-			{
+			while (true) {
 				String jsonString = dataInputStream.readUTF();
-				if(clientGameState == ClientGameState.INITIAL)
-				{
+				if (clientGameState == ClientGameState.INITIAL) {
 					List<Player> players = new ArrayList<Player>();
 					System.out.println(jsonString);
-					//½âÎöJSON×Ö·û´®
-					//½«JSON×Ö·û´®×ª»»ÎªJSONÊı×é
+					// è§£æJSONå­—ç¬¦ä¸²
+					// å°†JSONå­—ç¬¦ä¸²è½¬æ¢ä¸ºJSONæ•°ç»„
 					JSONArray playerJsonArray = JSONArray.parseArray(jsonString);
-					for(int i = 0;i < playerJsonArray.size();i++)
-					{
-						//»ñµÃµ¥¸öJSON¶ÔÏó
+					for (int i = 0; i < playerJsonArray.size(); i++) {
+						// è·å¾—å•ä¸ªJSONå¯¹è±¡
 						JSONObject playerJsonObject = (JSONObject) playerJsonArray.get(i);
 						int id = playerJsonObject.getInteger("id");
 						String name = playerJsonObject.getString("name");
 						boolean isDealer = playerJsonObject.getBoolean("dealer");
-						
-						//´æ·ÅÆË¿ËÁĞ±í
+
+						// å­˜æ”¾æ‰‘å…‹åˆ—è¡¨
 						List<Majhong> majhongs = new ArrayList<Majhong>();
 						JSONArray majhongJsonArray = playerJsonObject.getJSONArray("majhongs");
-						for(int j = 0;j<majhongJsonArray.size();j++) 
-						{
-							//Ã¿Ñ­»·Ò»´Î»ñµÃÒ»¸öpoker¶ÔÏó
+						for (int j = 0; j < majhongJsonArray.size(); j++) {
+							// æ¯å¾ªç¯ä¸€æ¬¡è·å¾—ä¸€ä¸ªpokerå¯¹è±¡
 							JSONObject pokerJsonObject = (JSONObject) majhongJsonArray.get(j);
 							int pokerID = pokerJsonObject.getInteger("id");
 							String pokerName = pokerJsonObject.getString("name");
-							Majhong majhong = new Majhong(pokerID,pokerName);
+							Majhong majhong = new Majhong(pokerID, pokerName);
 							majhongs.add(majhong);
 						}
-						Player player = new Player(id,name,isDealer,majhongs);
+						Player player = new Player(id, name, isDealer, majhongs);
 						players.add(player);
 					}
-					//ÏÔÊ¾4¸öÍæ¼ÒµÄĞÅÏ¢ÁË
-					if(players.size() == 4)
-					{
+					// æ˜¾ç¤º4ä¸ªç©å®¶çš„ä¿¡æ¯äº†
+					if (players.size() == 4) {
 						mainFrame.showAllPlayersInfo(players);
 					}
 					mainFrame.addClickEventToMajhongLabels();
-					
-					Message sendMessage = new Message(0,mainFrame.currentPlayer.getId(),"FirstFapai",null);
-					
-					//Í¨Öª·şÎñÆ÷£¬ÕâÊÇÅÆ¾ÖµÄ¿ªÊ¼£¬·şÎñÆ÷½«·¢ÅÆ¸ø×¯¼Ò
+
+					Message sendMessage = new Message(0, mainFrame.currentPlayer.getId(), "FirstFapai", null);
+
+					// é€šçŸ¥æœåŠ¡å™¨ï¼Œè¿™æ˜¯ç‰Œå±€çš„å¼€å§‹ï¼ŒæœåŠ¡å™¨å°†å‘ç‰Œç»™åº„å®¶
 					mainFrame.sendThread.setMsg(JSON.toJSONString(sendMessage));
-					
+
 					clientGameState = ClientGameState.PLAYING;
-				}
-				else if(clientGameState == ClientGameState.PLAYING)
-				{
+				} else if (clientGameState == ClientGameState.PLAYING) {
 					System.out.println("[Info] Client In Playing State");
-					
+
 					JSONObject msgJsonObject = JSON.parseObject(jsonString);
 					int typeID = msgJsonObject.getInteger("typeID");
 					int playerID = msgJsonObject.getInteger("playerID");
 					String content = msgJsonObject.getString("content");
-					if(typeID == 0) //ÅÆ¾Ö¿ªÊ¼£¬½ÓÊÕ·şÎñÆ÷·¢¸ø×¯¼ÒµÄµÚÒ»ÕÅÅÆ
+					if (typeID == 0) // ç‰Œå±€å¼€å§‹ï¼Œæ¥æ”¶æœåŠ¡å™¨å‘ç»™åº„å®¶çš„ç¬¬ä¸€å¼ ç‰Œ
 					{
 						System.out.println("[Client] Message received,typeID is 0");
-						System.out.println("[Client] Message received"+jsonString);
-						//Èôµ±Ç°Íæ¼ÒÊÇ×¯¼Ò£¬²Å½âÎöµ±Ç°µÄmsg£¬ÆäËûÍæ¼Ò¸ù¾İplayerIDÔö³¤¶ÔÓ¦Íæ¼ÒÅÆÊı
-						if(playerID == mainFrame.currentPlayer.getId())
-						{
+						System.out.println("[Client] Message received" + jsonString);
+						// è‹¥å½“å‰ç©å®¶æ˜¯åº„å®¶ï¼Œæ‰è§£æå½“å‰çš„msgï¼Œå…¶ä»–ç©å®¶æ ¹æ®playerIDå¢é•¿å¯¹åº”ç©å®¶ç‰Œæ•°
+						if (playerID == mainFrame.currentPlayer.getId()) {
 							System.out.println("[Client] Current Dealer");
 							JSONArray majhongJsonArray = msgJsonObject.getJSONArray("majhongs");
 							JSONObject majhongJsonObject = (JSONObject) majhongJsonArray.get(0);
 							int majhongID = majhongJsonObject.getInteger("id");
 							String majhongName = majhongJsonObject.getString("name");
-							Majhong majhong = new Majhong(majhongID,majhongName);
-							MajhongLabel majhongLabel = new MajhongLabel(majhongID,majhongName,0,"images/majhong/"+majhong.getId()+".png",60,90);
-							
+							Majhong majhong = new Majhong(majhongID, majhongName);
+							MajhongLabel majhongLabel = new MajhongLabel(majhongID, majhongName, 0,
+									"images/majhong/" + majhong.getId() + ".png", 60, 90);
+
 							mainFrame.addClickEventToMajhongLabel(majhongLabel);
-							
-							
-							//mainFrame.currentPlayer.getMajhongs().add(majhong);
+
+							// mainFrame.currentPlayer.getMajhongs().add(majhong);
 							int myMajhongNum = mainFrame.myHoldMajhongLabels.size();
-							MajhongLabel lastMajhongLabel = mainFrame.myHoldMajhongLabels.get(myMajhongNum -1);
-							GameUtil.move(majhongLabel,lastMajhongLabel.getX()+82+30,lastMajhongLabel.getY());
-							GameUtil.move(majhongLabel.getMajhongShellLabel(),lastMajhongLabel.getMajhongShellLabel().getX()+82+30,lastMajhongLabel.getMajhongShellLabel().getY());
-							
+							MajhongLabel lastMajhongLabel = mainFrame.myHoldMajhongLabels.get(myMajhongNum - 1);
+							GameUtil.move(majhongLabel, lastMajhongLabel.getX() + 82 + 30, lastMajhongLabel.getY());
+							GameUtil.move(majhongLabel.getMajhongShellLabel(),
+									lastMajhongLabel.getMajhongShellLabel().getX() + 82 + 30,
+									lastMajhongLabel.getMajhongShellLabel().getY());
+
 							mainFrame.myHoldMajhongLabels.add(majhongLabel);
-							
+
 							mainFrame.myPanel.add(majhongLabel);
 							mainFrame.myPanel.add(majhongLabel.getMajhongShellLabel());
 							mainFrame.myPanel.setComponentZOrder(majhongLabel.getMajhongShellLabel(), 0);
 							mainFrame.myPanel.setComponentZOrder(majhongLabel, 0);
-							
+
 							mainFrame.repaint();
 						}
-						
+
 					}
-					
+
 				}
-				
+
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }

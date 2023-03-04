@@ -5,12 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class SendThread extends Thread
-{
+public class SendThread extends Thread {
 	private String msg;
-	
+
 	private Socket socket;
-	
+
 	public String getMsg() {
 		return msg;
 	}
@@ -19,22 +18,19 @@ public class SendThread extends Thread
 		this.msg = msg;
 	}
 
-	public SendThread(Socket socket)
-	{
+	public SendThread(Socket socket) {
 		this.socket = socket;
 	}
-	
-	public SendThread(Socket socket,String msg)
-	{
+
+	public SendThread(Socket socket, String msg) {
 		this.socket = socket;
 		this.msg = msg;
 	}
-	
-	public SendThread()
-	{
-		
+
+	public SendThread() {
+
 	}
-	
+
 	public Socket getSocket() {
 		return socket;
 	}
@@ -43,28 +39,25 @@ public class SendThread extends Thread
 		this.socket = socket;
 	}
 
-	public void run() 
-	{
+	public void run() {
 		DataOutputStream dataOutputStream;
 		try {
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			while(true)
-			{
-				//Èç¹ûÏûÏ¢²»Îª¿Õ
-				if(msg != null)
-				{
-					System.out.println("ÏûÏ¢·¢ËÍÖĞ:"+msg);
-					//·¢ËÍÏûÏ¢
-					dataOutputStream.writeUTF(msg);	
-					//Çå¿ÕÏûÏ¢
+			while (true) {
+				// å¦‚æœæ¶ˆæ¯ä¸ä¸ºç©º
+				if (msg != null) {
+					System.out.println("æ¶ˆæ¯å‘é€ä¸­:" + msg);
+					// å‘é€æ¶ˆæ¯
+					dataOutputStream.writeUTF(msg);
+					// æ¸…ç©ºæ¶ˆæ¯
 					msg = null;
 				}
 				try {
-					Thread.sleep(50); //ÔİÍ££¬µÈĞÂÏûÏ¢½øÀ´
+					Thread.sleep(50); // æš‚åœï¼Œç­‰æ–°æ¶ˆæ¯è¿›æ¥
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}		
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

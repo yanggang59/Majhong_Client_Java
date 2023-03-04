@@ -21,220 +21,207 @@ import com.thomas.model.Majhong;
 import com.thomas.model.MajhongLabel;
 import com.thomas.util.GameUtil;
 
-
-public class MainFrame extends JFrame{
+public class MainFrame extends JFrame {
 	public MyPanel myPanel;
 	public String uname;
-	public Socket socket;
-	
+	// public Socket socket;
+
 	public SendThread sendThread;
 	public ReceiveThread receiveThread;
-	public MusicThread musicThread;   //²¥·ÅÒôĞ§Ïß³Ì
-	
-	public Player currentPlayer;   //´æ·Åµ±Ç°Íæ¼Ò¶ÔÏó
-	
-	//×Ô¼ÒµÄÊÖ³ÖÂé½«ÁĞ±í
+	public MusicThread musicThread; // æ’­æ”¾éŸ³æ•ˆçº¿ç¨‹
+
+	public Player currentPlayer; // å­˜æ”¾å½“å‰ç©å®¶å¯¹è±¡
+
+	// è‡ªå®¶çš„æ‰‹æŒéº»å°†åˆ—è¡¨
 	public List<MajhongLabel> myHoldMajhongLabels = new ArrayList<MajhongLabel>();
-	
-	//×Ô¼ÒµÄ´ò³öµÄÂé½«ÁĞ±í
+
+	// è‡ªå®¶çš„æ‰“å‡ºçš„éº»å°†åˆ—è¡¨
 	public List<MajhongLabel> myDiscardedMajhongLabels = new ArrayList<MajhongLabel>();
-	
-	//×Ô¼ÒµÄÅö¸ÜºÍ»¨ÅÆÂé½«ÁĞ±í
+
+	// è‡ªå®¶çš„ç¢°æ å’ŒèŠ±ç‰Œéº»å°†åˆ—è¡¨
 	public List<MajhongLabel> myOperatedMajhongLabels = new ArrayList<MajhongLabel>();
-	
-	//ÉÏÒ»¼ÒÊÖ³ÖµÄÂé½«ÁĞ±í
+
+	// ä¸Šä¸€å®¶æ‰‹æŒçš„éº»å°†åˆ—è¡¨
 	public List<MajhongLabel> leftHoldMajhongLabels = new ArrayList<MajhongLabel>();
-	//ÉÏÒ»¼ÒµÄ´ò³öµÄÂé½«ÁĞ±í
+	// ä¸Šä¸€å®¶çš„æ‰“å‡ºçš„éº»å°†åˆ—è¡¨
 	public List<MajhongLabel> leftDiscardedMajhongLabels = new ArrayList<MajhongLabel>();
-	//ÉÏÒ»¼ÒµÄÅö¸ÜºÍ»¨ÅÆÂé½«ÁĞ±í
+	// ä¸Šä¸€å®¶çš„ç¢°æ å’ŒèŠ±ç‰Œéº»å°†åˆ—è¡¨
 	public List<MajhongLabel> leftOperatedMajhongLabels = new ArrayList<MajhongLabel>();
-	
-	//ÏÂÒ»¼ÒÊÖ³ÖµÄÂé½«ÁĞ±í
+
+	// ä¸‹ä¸€å®¶æ‰‹æŒçš„éº»å°†åˆ—è¡¨
 	public List<MajhongLabel> rightHoldMajhongLabels = new ArrayList<MajhongLabel>();
-	//ÏÂÒ»¼ÒµÄ´ò³öµÄÂé½«ÁĞ±í
+	// ä¸‹ä¸€å®¶çš„æ‰“å‡ºçš„éº»å°†åˆ—è¡¨
 	public List<MajhongLabel> rightDiscardedMajhongLabels = new ArrayList<MajhongLabel>();
-	//ÏÂÒ»¼ÒµÄÅö¸ÜºÍ»¨ÅÆÂé½«ÁĞ±í
+	// ä¸‹ä¸€å®¶çš„ç¢°æ å’ŒèŠ±ç‰Œéº»å°†åˆ—è¡¨
 	public List<MajhongLabel> rightOperatedMajhongLabels = new ArrayList<MajhongLabel>();
 
-	//¶Ô¼ÒµÄÊÖ³ÖÂé½«ÁĞ±í
+	// å¯¹å®¶çš„æ‰‹æŒéº»å°†åˆ—è¡¨
 	public List<MajhongLabel> oppositeHoldMajhongLabels = new ArrayList<MajhongLabel>();
-	//¶Ô¼ÒµÄ´ò³öµÄÂé½«ÁĞ±í
+	// å¯¹å®¶çš„æ‰“å‡ºçš„éº»å°†åˆ—è¡¨
 	public List<MajhongLabel> opppositeDiscardedMajhongLabels = new ArrayList<MajhongLabel>();
-	//¶Ô¼ÒµÄÅö¸ÜºÍ»¨ÅÆÂé½«ÁĞ±í
+	// å¯¹å®¶çš„ç¢°æ å’ŒèŠ±ç‰Œéº»å°†åˆ—è¡¨
 	public List<MajhongLabel> oppositeOperatedMajhongLabels = new ArrayList<MajhongLabel>();
 
 	public List<MajhongLabel> selectedMajhongLabels = new ArrayList<MajhongLabel>();
-	//×¯¼ÒÍ¼±ê
+	// åº„å®¶å›¾æ ‡
 	public JLabel dealerIconLabel;
-	
-	//ÊÇ·ñÓĞÊÖÅÆ±»Ñ¡ÖĞ
+
+	// æ˜¯å¦æœ‰æ‰‹ç‰Œè¢«é€‰ä¸­
 	public boolean isHoldMajhongSelected;
 	public MajhongLabel selectedHoldMajhongLabel = null;
-	
-	//ÏÖÔÚÊÇ·ñÊÇÂÖµ½ÎÒ³öÅÆ
+
+	// ç°åœ¨æ˜¯å¦æ˜¯è½®åˆ°æˆ‘å‡ºç‰Œ
 	public boolean isMyturn;
-	
-	public MainFrame(String uname,Socket socket)
-	{
-		this.uname=uname;
-		this.socket = socket;
-		
-		//ÉèÖÃ´°¿ÚµÄÊôĞÔ
-		this.setSize(1280,720);
+
+	public MainFrame(String uname) {
+		this.uname = uname;
+		// this.socket = socket;
+
+		// è®¾ç½®çª—å£çš„å±æ€§
+		this.setSize(1280, 720);
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		//Ìí¼Ómypanel
+
+		// æ·»åŠ mypanel
 		myPanel = new MyPanel();
-		myPanel.setBounds(0,0,1280,720);
+		myPanel.setBounds(0, 0, 1280, 720);
 		this.add(myPanel);
-		
-		//Æô¶¯·¢ËÍÏûÏ¢µÄÏß³Ì
-		sendThread = new SendThread(socket,uname);
-		sendThread.start();
-		
-		//Æô¶¯½ÓÊÕÏûÏ¢µÄÏß³Ì
-		receiveThread = new ReceiveThread(socket, this);
-		receiveThread.start();
-		
-//		String picPath1 = "images/majhong/front_inhand_image_29.png";
-//		String valuePath = "images/majhong/w_1.png";
-//		//List<MajhongLabel> majhongLabels1 = new ArrayList<MajhongLabel>();
-//		for(int i = 0;i<13;i++)
-//		{
-//			MajhongLabel majhongLabel = new MajhongLabel(i,"wan",picPath1,88,128, false, true);
-//			//majhongLabels1.add(majhongLabel);
-//			this.myPanel.add(majhongLabel);  //Ìí¼Óµ½Ãæ°å
-//			//Ã¿´ÎµşÉÏÈ¥¶¼·ÅÔÚ×îÉÏÃæ
-//			this.myPanel.setComponentZOrder(majhongLabel, 0);
-//			
-//			MajhongLabel valueLabel = new MajhongLabel(i,"wan",valuePath,60,90, false, true);
-//			//majhongLabels1.add(majhongLabel);
-//			valueLabel.setVisible(false);
-//			this.myPanel.add(valueLabel);  //Ìí¼Óµ½Ãæ°å
-//			//Ã¿´ÎµşÉÏÈ¥¶¼·ÅÔÚ×îÉÏÃæ
-//			this.myPanel.setComponentZOrder(valueLabel, 0);
-//			
-//			//Ò»ÕÅÒ»ÕÅµÄÏÔÊ¾³öÀ´
-//			GameUtil.move(majhongLabel, 40+82*i, 550);
-//			GameUtil.move(valueLabel, 55+82*i, 550);
-//			valueLabel.setVisible(true);
-//		}
-//		
-//		String picPath2 = "images/majhong/opposite_inhand_29.png";
-//		List<MajhongLabel> majhongLabels2 = new ArrayList<MajhongLabel>();
-//		for(int i = 0;i<13;i++)
-//		{
-//			MajhongLabel majhongLabel = new MajhongLabel(i, "wan",picPath2,44,72, false, true);
-//			majhongLabels2.add(majhongLabel);
-//			this.myPanel.add(majhongLabel);  //Ìí¼Óµ½Ãæ°å
-//			//Ã¿´ÎµşÉÏÈ¥¶¼·ÅÔÚ×îÉÏÃæ
-//			this.myPanel.setComponentZOrder(majhongLabel, 0);
-//			//Ò»ÕÅÒ»ÕÅµÄÏÔÊ¾³öÀ´
-//			GameUtil.move(majhongLabel, 300+43*i, 10);
-//		}
-//		
-//		String picPath3 = "images/majhong/left_inhand_29.png";
-//		List<MajhongLabel> majhongLabels3 = new ArrayList<MajhongLabel>();
-//		for(int i = 0;i<13;i++)
-//		{
-//			MajhongLabel majhongLabel = new MajhongLabel(i, "wan",picPath3, 26,56,false, true);
-//			majhongLabels3.add(majhongLabel);
-//			this.myPanel.add(majhongLabel);  //Ìí¼Óµ½Ãæ°å
-//			//Ã¿´ÎµşÉÏÈ¥¶¼·ÅÔÚ×îÉÏÃæ
-//			this.myPanel.setComponentZOrder(majhongLabel, 0);
-//			//Ò»ÕÅÒ»ÕÅµÄÏÔÊ¾³öÀ´
-//			GameUtil.move(majhongLabel, 180, 140+20*i);
-//		}
-//		
-//		String picPath4 = "images/majhong/right_inhand_29.png";
-//		List<MajhongLabel> majhongLabels4 = new ArrayList<MajhongLabel>();
-//		for(int i = 0;i<13;i++)
-//		{
-//			MajhongLabel majhongLabel = new MajhongLabel(i, "wan", picPath4, 26,56,false, true);
-//			majhongLabels3.add(majhongLabel);
-//			this.myPanel.add(majhongLabel);  //Ìí¼Óµ½Ãæ°å
-//			//Ã¿´ÎµşÉÏÈ¥¶¼·ÅÔÚ×îÉÏÃæ
-//			this.myPanel.setComponentZOrder(majhongLabel, 0);
-//			//Ò»ÕÅÒ»ÕÅµÄÏÔÊ¾³öÀ´
-//			GameUtil.move(majhongLabel, 1000, 140+20*i);
-//		}
-		
+
+		// String picPath1 = "images/majhong/front_inhand_image_29.png";
+		// String valuePath = "images/majhong/w_1.png";
+		// //List<MajhongLabel> majhongLabels1 = new ArrayList<MajhongLabel>();
+		// for(int i = 0;i<13;i++)
+		// {
+		// MajhongLabel majhongLabel = new MajhongLabel(i,"wan",picPath1,88,128, false,
+		// true);
+		// //majhongLabels1.add(majhongLabel);
+		// this.myPanel.add(majhongLabel); //æ·»åŠ åˆ°é¢æ¿
+		// //æ¯æ¬¡å ä¸Šå»éƒ½æ”¾åœ¨æœ€ä¸Šé¢
+		// this.myPanel.setComponentZOrder(majhongLabel, 0);
+		//
+		// MajhongLabel valueLabel = new MajhongLabel(i,"wan",valuePath,60,90, false,
+		// true);
+		// //majhongLabels1.add(majhongLabel);
+		// valueLabel.setVisible(false);
+		// this.myPanel.add(valueLabel); //æ·»åŠ åˆ°é¢æ¿
+		// //æ¯æ¬¡å ä¸Šå»éƒ½æ”¾åœ¨æœ€ä¸Šé¢
+		// this.myPanel.setComponentZOrder(valueLabel, 0);
+		//
+		// //ä¸€å¼ ä¸€å¼ çš„æ˜¾ç¤ºå‡ºæ¥
+		// GameUtil.move(majhongLabel, 40+82*i, 550);
+		// GameUtil.move(valueLabel, 55+82*i, 550);
+		// valueLabel.setVisible(true);
+		// }
+		//
+		// String picPath2 = "images/majhong/opposite_inhand_29.png";
+		// List<MajhongLabel> majhongLabels2 = new ArrayList<MajhongLabel>();
+		// for(int i = 0;i<13;i++)
+		// {
+		// MajhongLabel majhongLabel = new MajhongLabel(i, "wan",picPath2,44,72, false,
+		// true);
+		// majhongLabels2.add(majhongLabel);
+		// this.myPanel.add(majhongLabel); //æ·»åŠ åˆ°é¢æ¿
+		// //æ¯æ¬¡å ä¸Šå»éƒ½æ”¾åœ¨æœ€ä¸Šé¢
+		// this.myPanel.setComponentZOrder(majhongLabel, 0);
+		// //ä¸€å¼ ä¸€å¼ çš„æ˜¾ç¤ºå‡ºæ¥
+		// GameUtil.move(majhongLabel, 300+43*i, 10);
+		// }
+		//
+		// String picPath3 = "images/majhong/left_inhand_29.png";
+		// List<MajhongLabel> majhongLabels3 = new ArrayList<MajhongLabel>();
+		// for(int i = 0;i<13;i++)
+		// {
+		// MajhongLabel majhongLabel = new MajhongLabel(i, "wan",picPath3, 26,56,false,
+		// true);
+		// majhongLabels3.add(majhongLabel);
+		// this.myPanel.add(majhongLabel); //æ·»åŠ åˆ°é¢æ¿
+		// //æ¯æ¬¡å ä¸Šå»éƒ½æ”¾åœ¨æœ€ä¸Šé¢
+		// this.myPanel.setComponentZOrder(majhongLabel, 0);
+		// //ä¸€å¼ ä¸€å¼ çš„æ˜¾ç¤ºå‡ºæ¥
+		// GameUtil.move(majhongLabel, 180, 140+20*i);
+		// }
+		//
+		// String picPath4 = "images/majhong/right_inhand_29.png";
+		// List<MajhongLabel> majhongLabels4 = new ArrayList<MajhongLabel>();
+		// for(int i = 0;i<13;i++)
+		// {
+		// MajhongLabel majhongLabel = new MajhongLabel(i, "wan", picPath4, 26,56,false,
+		// true);
+		// majhongLabels3.add(majhongLabel);
+		// this.myPanel.add(majhongLabel); //æ·»åŠ åˆ°é¢æ¿
+		// //æ¯æ¬¡å ä¸Šå»éƒ½æ”¾åœ¨æœ€ä¸Šé¢
+		// this.myPanel.setComponentZOrder(majhongLabel, 0);
+		// //ä¸€å¼ ä¸€å¼ çš„æ˜¾ç¤ºå‡ºæ¥
+		// GameUtil.move(majhongLabel, 1000, 140+20*i);
+		// }
+
 	}
 
 	public void showAllPlayersInfo(List<Player> players) {
-		//1.ÏÔÊ¾4¸öÍæ¼ÒµÄÃû×Ö,uname
-		
-		//2.ÏÔÊ¾×¯¼ÒĞÅÏ¢
-		for(int i = 0;i<players.size();i++)
-		{
-			if(players.get(i).getName().equals(uname))
-			{
+		// 1.æ˜¾ç¤º4ä¸ªç©å®¶çš„åå­—,uname
+
+		// 2.æ˜¾ç¤ºåº„å®¶ä¿¡æ¯
+		for (int i = 0; i < players.size(); i++) {
+			if (players.get(i).getName().equals(uname)) {
 				currentPlayer = players.get(i);
 			}
 		}
 		showDealerInfo(players);
-		
-		//3.ÏÔÊ¾µ±Ç°ËùÓĞÍæ¼ÒµÄÂé½«ÁĞ±í
-	
-		List<Majhong> majhongs =  currentPlayer.getMajhongs();
-		for(int i = 0;i<majhongs.size();i++)
-		{
+
+		// 3.æ˜¾ç¤ºå½“å‰æ‰€æœ‰ç©å®¶çš„éº»å°†åˆ—è¡¨
+
+		List<Majhong> majhongs = currentPlayer.getMajhongs();
+		for (int i = 0; i < majhongs.size(); i++) {
 			Majhong majhong = majhongs.get(i);
-			String majhongName  = majhong.getName();
-			MajhongLabel majhongLabel = new MajhongLabel(majhongs.get(i).getId(),majhongName,0,"images/majhong/"+majhong.getId()+".png",60,90);
+			String majhongName = majhong.getName();
+			MajhongLabel majhongLabel = new MajhongLabel(majhongs.get(i).getId(), majhongName, 0,
+					"images/majhong/" + majhong.getId() + ".png", 60, 90);
 			myHoldMajhongLabels.add(majhongLabel);
 		}
 		System.out.println("Before Sorting:");
-		for(int i=0;i<myHoldMajhongLabels.size();i++)
-		{
+		for (int i = 0; i < myHoldMajhongLabels.size(); i++) {
 			System.out.println(myHoldMajhongLabels.get(i).getId());
 		}
-		//¶ÔÂé½«ÅÆ½øĞĞÅÅĞò
+		// å¯¹éº»å°†ç‰Œè¿›è¡Œæ’åº
 		Collections.sort(myHoldMajhongLabels);
 		System.out.println("After Sorting:");
-		for(int i=0;i<myHoldMajhongLabels.size();i++)
-		{
+		for (int i = 0; i < myHoldMajhongLabels.size(); i++) {
 			System.out.println(myHoldMajhongLabels.get(i).getId());
 		}
-		showHoldMajhongs(myHoldMajhongLabels,currentPlayer.getId());
-		this.repaint();		
-		
+		showHoldMajhongs(myHoldMajhongLabels, currentPlayer.getId());
+		this.repaint();
+
 	}
-	
-	private void showHoldMajhongs(List<MajhongLabel> myHoldMajhongLabels,int playerID)
-	{
-		if(currentPlayer.getId() == playerID)  //ÏÔÊ¾×Ô¼º¼ÒµÄÊÖ³ÖÅÆ
+
+	private void showHoldMajhongs(List<MajhongLabel> myHoldMajhongLabels, int playerID) {
+		if (currentPlayer.getId() == playerID) // æ˜¾ç¤ºè‡ªå·±å®¶çš„æ‰‹æŒç‰Œ
 		{
 			String shellPath = "images/majhong/front_inhand_image_29.png";
-			for(int i = 0;i<myHoldMajhongLabels.size();i++)
-			{
-				//Ò»ÕÅÒ»ÕÅµÄÏÔÊ¾³öÀ´
-				GameUtil.move(myHoldMajhongLabels.get(i).getMajhongShellLabel(), 40+82*i, 550);
-				GameUtil.move(myHoldMajhongLabels.get(i), 55+82*i, 580);
-				
-				this.myPanel.add(myHoldMajhongLabels.get(i));  //Ìí¼Óµ½Ãæ°å
-				this.myPanel.add(myHoldMajhongLabels.get(i).getMajhongShellLabel());  //Ìí¼Óµ½Ãæ°å
-				
-				//Ã¿´ÎµşÉÏÈ¥¶¼·ÅÔÚ×îÉÏÃæ
+			for (int i = 0; i < myHoldMajhongLabels.size(); i++) {
+				// ä¸€å¼ ä¸€å¼ çš„æ˜¾ç¤ºå‡ºæ¥
+				GameUtil.move(myHoldMajhongLabels.get(i).getMajhongShellLabel(), 40 + 82 * i, 550);
+				GameUtil.move(myHoldMajhongLabels.get(i), 55 + 82 * i, 580);
+
+				this.myPanel.add(myHoldMajhongLabels.get(i)); // æ·»åŠ åˆ°é¢æ¿
+				this.myPanel.add(myHoldMajhongLabels.get(i).getMajhongShellLabel()); // æ·»åŠ åˆ°é¢æ¿
+
+				// æ¯æ¬¡å ä¸Šå»éƒ½æ”¾åœ¨æœ€ä¸Šé¢
 				this.myPanel.setComponentZOrder(myHoldMajhongLabels.get(i).getMajhongShellLabel(), 0);
 				this.myPanel.setComponentZOrder(myHoldMajhongLabels.get(i), 0);
 			}
 		}
 		this.repaint();
 	}
-	
-	public void playSoundEffect(String majhongName)
-	{
-		musicThread = new MusicThread("audio/"+majhongName+".wav");
+
+	public void playSoundEffect(String majhongName) {
+		musicThread = new MusicThread("audio/" + majhongName + ".wav");
 		musicThread.start();
 	}
-	
+
 	public void discardMajhong(MajhongLabel majhongLabel) {
 		myHoldMajhongLabels.remove(majhongLabel);
-		for(int i = 0;i<myHoldMajhongLabels.size();i++)
-		{
+		for (int i = 0; i < myHoldMajhongLabels.size(); i++) {
 			this.myPanel.remove(myHoldMajhongLabels.get(i));
 			this.myPanel.remove(myHoldMajhongLabels.get(i).getMajhongShellLabel());
 		}
@@ -242,164 +229,151 @@ public class MainFrame extends JFrame{
 		myDiscardedMajhongLabels.add(majhongLabel);
 		playSoundEffect(majhongLabel.getName());
 	}
-	
+
 	private void showDiscardMajhongLabels(List<MajhongLabel> myDiscardedMajhongLabels, int playerID) {
 		// TODO Auto-generated method stub
-		if(currentPlayer.getId() == playerID)
-		{
+		if (currentPlayer.getId() == playerID) {
 			String shellPath = "images/majhong/vertical_discard_image_29.png";
-			for(int i = 0;i<myDiscardedMajhongLabels.size();i++)
-			{
+			for (int i = 0; i < myDiscardedMajhongLabels.size(); i++) {
 				MajhongLabel majhongLabel = myDiscardedMajhongLabels.get(i);
-				majhongLabel.setValueLabelSize(35,42);
-				//ÉèÖÃÍâ¿Ç±êÇ©
-				majhongLabel.getMajhongShellLabel().setUpIcon(shellPath,38,58);
-				//´´½¨ÆË¿Ë±êÇ©
-				this.myPanel.add(myDiscardedMajhongLabels.get(i));  //Ìí¼Óµ½Ãæ°å
-				this.myPanel.add(myDiscardedMajhongLabels.get(i).getMajhongShellLabel());  //Ìí¼Óµ½Ãæ°å
-				//Ã¿´ÎµşÉÏÈ¥¶¼·ÅÔÚ×îÉÏÃæ
+				majhongLabel.setValueLabelSize(35, 42);
+				// è®¾ç½®å¤–å£³æ ‡ç­¾
+				majhongLabel.getMajhongShellLabel().setUpIcon(shellPath, 38, 58);
+				// åˆ›å»ºæ‰‘å…‹æ ‡ç­¾
+				this.myPanel.add(myDiscardedMajhongLabels.get(i)); // æ·»åŠ åˆ°é¢æ¿
+				this.myPanel.add(myDiscardedMajhongLabels.get(i).getMajhongShellLabel()); // æ·»åŠ åˆ°é¢æ¿
+				// æ¯æ¬¡å ä¸Šå»éƒ½æ”¾åœ¨æœ€ä¸Šé¢
 				this.myPanel.setComponentZOrder(myDiscardedMajhongLabels.get(i).getMajhongShellLabel(), 0);
 				this.myPanel.setComponentZOrder(myDiscardedMajhongLabels.get(i), 0);
-				//Ò»ÕÅÒ»ÕÅµÄÏÔÊ¾³öÀ´
-				GameUtil.move(myDiscardedMajhongLabels.get(i).getMajhongShellLabel(), 254+38*i, 395);
-				GameUtil.move(myDiscardedMajhongLabels.get(i), 255+38*i, 370);
+				// ä¸€å¼ ä¸€å¼ çš„æ˜¾ç¤ºå‡ºæ¥
+				GameUtil.move(myDiscardedMajhongLabels.get(i).getMajhongShellLabel(), 254 + 38 * i, 395);
+				GameUtil.move(myDiscardedMajhongLabels.get(i), 255 + 38 * i, 370);
 			}
 		}
 		this.repaint();
 	}
-	
-	public void refreshMyPanel()
-	{
+
+	public void refreshMyPanel() {
 		this.repaint();
 	}
-	
-	private void showDealerInfo(List<Player> players) 
-	{
+
+	private void showDealerInfo(List<Player> players) {
 		String dealerIconPath = "images/majhong/dealer.png";
 		dealerIconLabel = new JLabel();
 		dealerIconLabel.setIcon(new ImageIcon(dealerIconPath));
-		dealerIconLabel.setSize(44,46);
-		//¸ù¾İÍæ¼ÒIDÏÔÊ¾ÔÚ¶ÔÓ¦µÄÎ»ÖÃ
+		dealerIconLabel.setSize(44, 46);
+		// æ ¹æ®ç©å®¶IDæ˜¾ç¤ºåœ¨å¯¹åº”çš„ä½ç½®
 		int myID = currentPlayer.getId();
 		int dealerID = 0;
-		for(int i=0;i<players.size();i++)
-		{
-			if(players.get(i).isDealer())
-			{
+		for (int i = 0; i < players.size(); i++) {
+			if (players.get(i).isDealer()) {
 				dealerID = i;
 				break;
 			}
 		}
-		//×Ô¼ºÊÇ×¯¼Ò
-		if(dealerID == myID)  
-		{
-			dealerIconLabel.setLocation(130,500);
+		// è‡ªå·±æ˜¯åº„å®¶
+		if (dealerID == myID) {
+			dealerIconLabel.setLocation(130, 500);
 		}
-		//ÏÂÒ»¼ÒÊÇ×¯¼Ò     0 1 , 1 2 , 2 3 , 3 0
-		else if(myID+1 == dealerID || myID-3 == currentPlayer.getId())
-		{
-			dealerIconLabel.setLocation(1200,360);
+		// ä¸‹ä¸€å®¶æ˜¯åº„å®¶ 0 1 , 1 2 , 2 3 , 3 0
+		else if (myID + 1 == dealerID || myID - 3 == currentPlayer.getId()) {
+			dealerIconLabel.setLocation(1200, 360);
 		}
-		//¶Ô¼ÒÊÇ×¯¼Ò 0 2, 1 3, 2 0, 3 1
-		else if(myID+2==dealerID || dealerID+2==myID){
-			dealerIconLabel.setLocation(1000,50);
-		}//ÉÏ¼ÒÊÇ×¯¼Ò
+		// å¯¹å®¶æ˜¯åº„å®¶ 0 2, 1 3, 2 0, 3 1
+		else if (myID + 2 == dealerID || dealerID + 2 == myID) {
+			dealerIconLabel.setLocation(1000, 50);
+		} // ä¸Šå®¶æ˜¯åº„å®¶
 		else {
-			dealerIconLabel.setLocation(50,360);
+			dealerIconLabel.setLocation(50, 360);
 		}
 		this.myPanel.add(dealerIconLabel);
-		this.repaint(); //ÖØ»æ
-		
+		this.repaint(); // é‡ç»˜
+
 	}
-	
-	public void addClickEventToMajhongLabel(MajhongLabel majhongLabel)
-	{
+
+	public void addClickEventToMajhongLabel(MajhongLabel majhongLabel) {
 		majhongLabel.addMouseListener(new MajhongLabelEvent());
 	}
 
-	public void addClickEventToMajhongLabels()
-	{
-		for(int i=0;i<myHoldMajhongLabels.size();i++)
-		{
+	public void addClickEventToMajhongLabels() {
+		for (int i = 0; i < myHoldMajhongLabels.size(); i++) {
 			myHoldMajhongLabels.get(i).addMouseListener(new MajhongLabelEvent());
 		}
 	}
-	
-	class MajhongLabelEvent implements MouseListener
-	{
+
+	class MajhongLabelEvent implements MouseListener {
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			//Èç¹ûÖ®Ç°Ñ¡Ôñ¹ıÁËÕâÕÅÅÆ,²¢ÇÒÂÖµ½ÎÒ³öÅÆ£¬Ôò´ò³ö
-			MajhongLabel majhongLabel = (MajhongLabel)arg0.getSource();
-			if(majhongLabel.isSelected())
-			{
-				selectedHoldMajhongLabel=null;
+			// å¦‚æœä¹‹å‰é€‰æ‹©è¿‡äº†è¿™å¼ ç‰Œ,å¹¶ä¸”è½®åˆ°æˆ‘å‡ºç‰Œï¼Œåˆ™æ‰“å‡º
+			MajhongLabel majhongLabel = (MajhongLabel) arg0.getSource();
+			if (majhongLabel.isSelected()) {
+				selectedHoldMajhongLabel = null;
 				discardMajhong(majhongLabel);
-				showHoldMajhongs(myHoldMajhongLabels,currentPlayer.getId());
-				showDiscardMajhongLabels(myDiscardedMajhongLabels,currentPlayer.getId());
+				showHoldMajhongs(myHoldMajhongLabels, currentPlayer.getId());
+				showDiscardMajhongLabels(myDiscardedMajhongLabels, currentPlayer.getId());
 			}
-			//Èç¹ûÖ®Ç°Ã»ÓĞÑ¡Ôñ,ÔòÏÈ¿´ÓĞÃ»ÓĞÆäËûÑ¡ÖĞµÄÅÆ
-			else 
-			{
-				//Èç¹ûÖ®Ç°Ã»ÓĞÆäËûµÄÅÆ±»Ñ¡ÖĞ
-				if(selectedHoldMajhongLabel == null)
-				{
-					//±»Ñ¡ÖĞµÄÅÆÍùÉÏÒÆ¶¯Ò»¶Î¾àÀë
-					majhongLabel.setLocation(majhongLabel.getX(),majhongLabel.getY()-30);
-					majhongLabel.getMajhongShellLabel().setLocation(majhongLabel.getMajhongShellLabel().getX(),majhongLabel.getMajhongShellLabel().getY()-30);
-					
+			// å¦‚æœä¹‹å‰æ²¡æœ‰é€‰æ‹©,åˆ™å…ˆçœ‹æœ‰æ²¡æœ‰å…¶ä»–é€‰ä¸­çš„ç‰Œ
+			else {
+				// å¦‚æœä¹‹å‰æ²¡æœ‰å…¶ä»–çš„ç‰Œè¢«é€‰ä¸­
+				if (selectedHoldMajhongLabel == null) {
+					// è¢«é€‰ä¸­çš„ç‰Œå¾€ä¸Šç§»åŠ¨ä¸€æ®µè·ç¦»
+					majhongLabel.setLocation(majhongLabel.getX(), majhongLabel.getY() - 30);
+					majhongLabel.getMajhongShellLabel().setLocation(majhongLabel.getMajhongShellLabel().getX(),
+							majhongLabel.getMajhongShellLabel().getY() - 30);
+
 					selectedHoldMajhongLabel = majhongLabel;
-					majhongLabel.setSelected(true);	
-				}
-				else //Ö®Ç°ÓĞÆäËûÅÆÑ¡ÖĞ
+					majhongLabel.setSelected(true);
+				} else // ä¹‹å‰æœ‰å…¶ä»–ç‰Œé€‰ä¸­
 				{
-					//Ö®Ç°±»Ñ¡ÖĞµÄÅÆ·µ»ØÔ­Î»ÖÃ
-					selectedHoldMajhongLabel.setLocation(selectedHoldMajhongLabel.getX(),selectedHoldMajhongLabel.getY()+30);
-					selectedHoldMajhongLabel.getMajhongShellLabel().setLocation(selectedHoldMajhongLabel.getMajhongShellLabel().getX(),selectedHoldMajhongLabel.getMajhongShellLabel().getY()+30);
-//					if(isChiPengMode)
-//					{
-//						selectedMajhongLabels.add(majhongLabel);
-//					}
-					//È¡ÏûÖ®Ç°±»Ñ¡ÖĞµÄÅÆ
+					// ä¹‹å‰è¢«é€‰ä¸­çš„ç‰Œè¿”å›åŸä½ç½®
+					selectedHoldMajhongLabel.setLocation(selectedHoldMajhongLabel.getX(),
+							selectedHoldMajhongLabel.getY() + 30);
+					selectedHoldMajhongLabel.getMajhongShellLabel().setLocation(
+							selectedHoldMajhongLabel.getMajhongShellLabel().getX(),
+							selectedHoldMajhongLabel.getMajhongShellLabel().getY() + 30);
+					// if(isChiPengMode)
+					// {
+					// selectedMajhongLabels.add(majhongLabel);
+					// }
+					// å–æ¶ˆä¹‹å‰è¢«é€‰ä¸­çš„ç‰Œ
 					selectedHoldMajhongLabel.setSelected(false);
-					
-					//±»Ñ¡ÖĞµÄÅÆÍùÉÏÒÆ¶¯Ò»¶Î¾àÀë
-					majhongLabel.setLocation(majhongLabel.getX(),majhongLabel.getY()-30);
-					majhongLabel.getMajhongShellLabel().setLocation(majhongLabel.getMajhongShellLabel().getX(),majhongLabel.getMajhongShellLabel().getY()-30);
+
+					// è¢«é€‰ä¸­çš„ç‰Œå¾€ä¸Šç§»åŠ¨ä¸€æ®µè·ç¦»
+					majhongLabel.setLocation(majhongLabel.getX(), majhongLabel.getY() - 30);
+					majhongLabel.getMajhongShellLabel().setLocation(majhongLabel.getMajhongShellLabel().getX(),
+							majhongLabel.getMajhongShellLabel().getY() - 30);
 					selectedHoldMajhongLabel = majhongLabel;
 					selectedHoldMajhongLabel.setSelected(true);
 					refreshMyPanel();
 				}
-			} 
+			}
 		}
-
-		
 
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void mouseExited(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void mousePressed(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 	}
 
 }
